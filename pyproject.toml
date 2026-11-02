@@ -1,0 +1,52 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tau-schedule-prompt"
+version = "0.1.0"
+description = "Tau's Heartbeat - a Tau extension for scheduling recurring and one-shot main agent or background prompts with cron-like functionality"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dependencies = ["tau-ai>=0.4.0"]
+
+[tool.uv.sources]
+tau-ai = { path = "../tau", editable = true }
+
+[dependency-groups]
+dev = ["mypy>=1.10", "pytest>=8.0", "ruff>=0.5"]
+
+# Tau discovers the entry point from this manifest, so `tau -e .` and
+# `tau install ./tau-schedule-prompt` both work without an extension.py at the
+# repository root.
+[tool.tau]
+extensions = ["src/tau_schedule_prompt/extension.py"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tau_schedule_prompt"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ANN"]
+# The job store, tool arguments, and custom-message details are arbitrary JSON by
+# contract, so the defensive coercers that read them take `Any` deliberately.
+ignore = ["ANN401"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["tau_schedule_prompt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
